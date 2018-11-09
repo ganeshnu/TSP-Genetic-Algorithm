@@ -1,0 +1,32 @@
+import random
+import xlrd
+
+Dist_Grid = Get_Dist_Data()
+
+Popln_size = 20 ; Iterations = 200 ; Mutate_Freq = 0.01
+
+Length = len (Dist_Grid) -1 ; Popln = [] ; Children = [] ; Popln_fit = [] ; Fit_Inverse = []
+
+Best_Member = [] ; Best_Member_Fit = 0.0
+
+Popln = gen_popln (Length, Popln_size)
+Popln_fit = fit_func (Popln)
+Best_Member_Fit = min (Popln_fit)
+Best_Member = Popln [Popln_fit.index(Best_Member_Fit)]
+
+for Gen in range (Iterations):
+    Children = [] ; Fit_Inverse = []
+    for k in Popln_fit:
+            Fit_Inverse.append (int(1/k*10000)**2)
+    for j in range (Popln_size):
+        Children.append (mate (random.choices(Popln, weights = Fit_Inverse, k=1)[0], random.choices(Popln, weights = Fit_Inverse, k=1)[0]))
+        if Mutate_Freq > random.random():
+            Children[-1] = mutate (Children[-1])
+    Popln = Children
+    Popln_fit = fit_func (Popln)
+    if min (Popln_fit) < Best_Member_Fit:
+        Best_Member_Fit = min (Popln_fit)
+        Best_Member = Popln [Popln_fit.index(Best_Member_Fit)]
+        
+print (Best_Member_Fit)
+print (Best_Member)
